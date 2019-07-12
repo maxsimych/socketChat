@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Socket Chat</title>
+</head>
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css"
+    integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS" 
+    crossorigin="anonymous"
+>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+<script src="/socket.io/socket.io.js"></script>
+<style>
+    p {
+        margin: 0;
+    }
+    .serverMsg {
+        color: gray;
+        font-style: italic;
+    }
+</style>
+<body>
+    <h1>My real-time Socket chat!</h1>
+    <form action="" id="formChat"><input type="text" id="textField" autofocus autocomplete="off" ><input type="submit" value="Send"></form>
+    <div id="chatField">
+    </div>
+    <script>
+        const socket = io.connect('http://localhost:3000');
+        let username = prompt('Enter your name:') || 'Anonimous';
+            // msgFunc = (classes,msg) => {
+            //     $(`<p>${msg}</p>`).addClass(classes).appendTo($('#chatField'));
+            // };
+        $('#formChat').submit((e) => {
+            e.preventDefault();
+            socket.emit('sendMsg', $(textField).val());
+            $(textField).val('');
+        });
+        socket.emit('newUsername', username);
+        socket.on('serverMsg', (msg) => {
+            $(`<p class="serverMsg">${msg}</p>`).appendTo($('#chatField'));
+        });
+        socket.on('msg', (msg) => {
+            $(`<p>${msg}</p>`).appendTo($('#chatField'));
+        });
+    </script>
+</body>
+</html>
